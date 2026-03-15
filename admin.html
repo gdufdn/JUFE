@@ -1,0 +1,971 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>后台管理系统 - 应用服务平台</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c5ce7;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+            --gray-color: #636e72;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+        }
+        
+        /* 登录页面 */
+        .login-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .login-box {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            width: 100%;
+            max-width: 450px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        }
+        
+        .login-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .login-header h1 {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .login-header p {
+            color: var(--gray-color);
+        }
+        
+        .login-form .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .login-form label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .login-form input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .login-form input:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        .login-error {
+            color: var(--danger-color);
+            font-size: 0.9rem;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        /* 后台主界面 */
+        .admin-container {
+            display: none;
+            min-height: 100vh;
+        }
+        
+        /* 侧边栏 */
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(180deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            position: fixed;
+            height: 100vh;
+            box-shadow: 5px 0 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .sidebar-header {
+            padding: 30px 20px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .sidebar-header h2 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .sidebar-menu {
+            list-style: none;
+            padding: 20px 0;
+        }
+        
+        .menu-item {
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .menu-item:hover, .menu-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
+            border-left: 4px solid white;
+        }
+        
+        .menu-item i {
+            width: 20px;
+            text-align: center;
+        }
+        
+        /* 主内容区 */
+        .main-content {
+            margin-left: 250px;
+            padding: 30px;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .header h1 {
+            color: var(--dark-color);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+        }
+        
+        /* 管理面板 */
+        .admin-panel {
+            display: none;
+        }
+        
+        .admin-panel.active {
+            display: block;
+        }
+        
+        .panel-card {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            margin-bottom: 30px;
+        }
+        
+        .panel-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease;
+        }
+        
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+        
+        textarea.form-control {
+            min-height: 150px;
+            resize: vertical;
+        }
+        
+        /* 按钮样式 */
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3a5bff;
+            transform: translateY(-2px);
+        }
+        
+        .btn-danger {
+            background-color: var(--danger-color);
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #00a085;
+        }
+        
+        /* 链接管理表格 */
+        .links-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .links-table th, .links-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        
+        .links-table th {
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .links-table tr:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn-sm {
+            padding: 8px 15px;
+            font-size: 0.9rem;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 70px;
+            }
+            
+            .sidebar-header h2 span, .menu-item span {
+                display: none;
+            }
+            
+            .main-content {
+                margin-left: 70px;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .main-content {
+                padding: 20px;
+            }
+            
+            .panel-card {
+                padding: 20px;
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 登录页面 -->
+    <div id="login-page" class="login-container">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>
+                    <i class="fas fa-lock"></i>
+                    后台管理系统
+                </h1>
+                <p>管理员登录</p>
+            </div>
+            
+            <form id="login-form" class="login-form">
+                <div class="form-group">
+                    <label for="username">用户名</label>
+                    <input type="text" id="username" placeholder="请输入用户名" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="password">密码</label>
+                    <input type="password" id="password" placeholder="请输入密码" required>
+                </div>
+                
+                <div class="login-error" id="login-error">
+                    用户名或密码错误，请重试！
+                </div>
+                
+                <button type="submit" class="btn btn-primary" style="width: 100%;">
+                    <i class="fas fa-sign-in-alt"></i>
+                    登录
+                </button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- 后台管理页面 -->
+    <div id="admin-page" class="admin-container">
+        <!-- 侧边栏 -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <h2>
+                    <i class="fas fa-cogs"></i>
+                    <span>后台管理</span>
+                </h2>
+            </div>
+            <ul class="sidebar-menu">
+                <li class="menu-item active" data-panel="dashboard">
+                    <i class="fas fa-tachometer-alt"></i>
+                    <span>仪表板</span>
+                </li>
+                <li class="menu-item" data-panel="announcement">
+                    <i class="fas fa-bullhorn"></i>
+                    <span>公告管理</span>
+                </li>
+                <li class="menu-item" data-panel="links">
+                    <i class="fas fa-link"></i>
+                    <span>链接管理</span>
+                </li>
+                <li class="menu-item" data-panel="maintenance">
+                    <i class="fas fa-tools"></i>
+                    <span>系统设置</span>
+                </li>
+                <li class="menu-item" data-panel="analytics">
+                    <i class="fas fa-chart-line"></i>
+                    <span>数据分析</span>
+                </li>
+                <li class="menu-item" id="logout-btn">
+                    <i class="fas fa-sign-out-alt"></i>
+                    <span>退出登录</span>
+                </li>
+            </ul>
+        </div>
+        
+        <!-- 主内容区 -->
+        <div class="main-content">
+            <!-- 头部 -->
+            <div class="header">
+                <h1 id="panel-title">仪表板</h1>
+                <div class="user-info">
+                    <div class="user-avatar">AD</div>
+                    <div>
+                        <div style="font-weight: 600;">管理员</div>
+                        <div style="font-size: 0.9rem; color: var(--gray-color);">admin@example.com</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 仪表板面板 -->
+            <div id="dashboard-panel" class="admin-panel active">
+                <div class="panel-card">
+                    <h2 class="panel-title">
+                        <i class="fas fa-tachometer-alt"></i>
+                        系统概览
+                    </h2>
+                    <p>欢迎使用后台管理系统！您可以从左侧菜单选择要管理的功能。</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <h3 style="color: var(--primary-color); margin-bottom: 10px;">总点击量</h3>
+                            <p style="font-size: 2rem; font-weight: 700;" id="admin-total-clicks">0</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <h3 style="color: var(--success-color); margin-bottom: 10px;">活跃链接数</h3>
+                            <p style="font-size: 2rem; font-weight: 700;" id="admin-active-links">5</p>
+                        </div>
+                        <div style="background: #f8f9fa; padding: 20px; border-radius: 10px;">
+                            <h3 style="color: var(--warning-color); margin-bottom: 10px;">今日访问量</h3>
+                            <p style="font-size: 2rem; font-weight: 700;" id="admin-today-visits">0</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 公告管理面板 -->
+            <div id="announcement-panel" class="admin-panel">
+                <div class="panel-card">
+                    <h2 class="panel-title">
+                        <i class="fas fa-bullhorn"></i>
+                        公告管理
+                    </h2>
+                    <p>修改首页显示的公告内容，修改后将实时生效。</p>
+                    
+                    <div class="form-group" style="margin-top: 20px;">
+                        <label for="announcement-content">公告内容</label>
+                        <textarea id="announcement-content" class="form-control" placeholder="请输入公告内容..."></textarea>
+                    </div>
+                    
+                    <button id="save-announcement" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        保存公告
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 链接管理面板 -->
+            <div id="links-panel" class="admin-panel">
+                <div class="panel-card">
+                    <h2 class="panel-title">
+                        <i class="fas fa-link"></i>
+                        链接管理
+                    </h2>
+                    <p>管理首页显示的5个链接卡片，可以修改标题、描述、图标和链接地址。</p>
+                    
+                    <div id="links-form-container">
+                        <!-- 链接表单将通过JS动态生成 -->
+                    </div>
+                    
+                    <button id="save-links" class="btn btn-primary" style="margin-top: 20px;">
+                        <i class="fas fa-save"></i>
+                        保存所有链接
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 系统设置面板 -->
+            <div id="maintenance-panel" class="admin-panel">
+                <div class="panel-card">
+                    <h2 class="panel-title">
+                        <i class="fas fa-tools"></i>
+                        系统设置
+                    </h2>
+                    <p>设置系统维护时间和版本号，修改后将显示在首页底部。</p>
+                    
+                    <div class="form-group">
+                        <label for="maintenance-schedule">维护时间安排</label>
+                        <input type="text" id="maintenance-schedule" class="form-control" placeholder="例如：每周日凌晨 2:00-4:00">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="version-number">版本号</label>
+                        <input type="text" id="version-number" class="form-control" placeholder="例如：v2.1.5">
+                    </div>
+                    
+                    <button id="save-maintenance" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        保存设置
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 数据分析面板 -->
+            <div id="analytics-panel" class="admin-panel">
+                <div class="panel-card">
+                    <h2 class="panel-title">
+                        <i class="fas fa-chart-line"></i>
+                        数据分析
+                    </h2>
+                    <p>查看系统使用数据和链接点击统计。</p>
+                    
+                    <div style="margin-top: 20px;">
+                        <h3 style="margin-bottom: 15px;">链接点击统计</h3>
+                        <table class="links-table">
+                            <thead>
+                                <tr>
+                                    <th>链接名称</th>
+                                    <th>点击次数</th>
+                                    <th>最后点击时间</th>
+                                    <th>操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="analytics-table">
+                                <!-- 数据分析表格将通过JS动态生成 -->
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <button id="reset-stats" class="btn btn-danger">
+                            <i class="fas fa-redo"></i>
+                            重置统计数据
+                        </button>
+                        <button id="export-stats" class="btn btn-success" style="margin-left: 10px;">
+                            <i class="fas fa-download"></i>
+                            导出数据
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 后台管理逻辑
+        document.addEventListener('DOMContentLoaded', function() {
+            // 检查登录状态
+            checkLoginStatus();
+            
+            // 初始化事件监听器
+            initAdminEventListeners();
+        });
+
+        // 检查登录状态
+        function checkLoginStatus() {
+            const isLoggedIn = localStorage.getItem('adminLoggedIn') === 'true';
+            
+            if (isLoggedIn) {
+                showAdminPage();
+            } else {
+                showLoginPage();
+            }
+        }
+
+        // 显示登录页面
+        function showLoginPage() {
+            document.getElementById('login-page').style.display = 'flex';
+            document.getElementById('admin-page').style.display = 'none';
+        }
+
+        // 显示管理页面
+        function showAdminPage() {
+            document.getElementById('login-page').style.display = 'none';
+            document.getElementById('admin-page').style.display = 'block';
+            
+            // 加载应用数据
+            loadAppDataForAdmin();
+            
+            // 初始化管理面板
+            initAdminPanels();
+        }
+
+        // 加载应用数据（用于后台管理）
+        function loadAppDataForAdmin() {
+            const savedData = localStorage.getItem('appServicePlatformData');
+            let appData = {};
+            
+            if (savedData) {
+                try {
+                    appData = JSON.parse(savedData);
+                } catch (e) {
+                    console.error('加载数据失败:', e);
+                    appData = getDefaultAppData();
+                }
+            } else {
+                appData = getDefaultAppData();
+            }
+            
+            // 更新管理页面上的数据
+            updateAdminDataDisplay(appData);
+            
+            return appData;
+        }
+
+        // 获取默认应用数据
+        function getDefaultAppData() {
+            return {
+                links: [
+                    {
+                        id: 1,
+                        title: "应用下载中心",
+                        description: "获取最新版本的应用和工具，支持多平台下载",
+                        icon: "fas fa-download",
+                        url: "https://example.com/download",
+                        color: "#4a6bff",
+                        clicks: 0,
+                        lastClick: null
+                    },
+                    {
+                        id: 2,
+                        title: "服务控制台",
+                        description: "管理您的服务配置和监控运行状态",
+                        icon: "fas fa-cogs",
+                        url: "https://example.com/console",
+                        color: "#00b894",
+                        clicks: 0,
+                        lastClick: null
+                    },
+                    {
+                        id: 3,
+                        title: "用户中心",
+                        description: "查看个人信息、权限设置和账号安全",
+                        icon: "fas fa-user-circle",
+                        url: "https://example.com/user",
+                        color: "#fdcb6e",
+                        clicks: 0,
+                        lastClick: null
+                    },
+                    {
+                        id: 4,
+                        title: "数据分析",
+                        description: "查看平台使用数据和分析报告",
+                        icon: "fas fa-chart-bar",
+                        url: "https://example.com/analytics",
+                        color: "#e17055",
+                        clicks: 0,
+                        lastClick: null
+                    },
+                    {
+                        id: 5,
+                        title: "技术支持",
+                        description: "获取帮助文档、联系客服和技术支持",
+                        icon: "fas fa-headset",
+                        url: "https://example.com/support",
+                        color: "#6c5ce7",
+                        clicks: 0,
+                        lastClick: null
+                    }
+                ],
+                totalClicks: 0,
+                todayVisits: 0,
+                announcement: "欢迎使用应用服务平台！系统运行稳定，所有功能均可正常使用。最新版本已上线，带来更流畅的使用体验。",
+                maintenanceTime: "每周日凌晨 2:00-4:00",
+                version: "v2.1.5"
+            };
+        }
+
+        // 更新管理页面数据显示
+        function updateAdminDataDisplay(appData) {
+            // 更新总点击量
+            const totalClicksElement = document.getElementById('admin-total-clicks');
+            if (totalClicksElement) {
+                totalClicksElement.textContent = appData.totalClicks || 0;
+            }
+            
+            // 更新活跃链接数
+            const activeLinksElement = document.getElementById('admin-active-links');
+            if (activeLinksElement && appData.links) {
+                activeLinksElement.textContent = appData.links.length;
+            }
+            
+            // 更新今日访问量
+            const todayVisitsElement = document.getElementById('admin-today-visits');
+            if (todayVisitsElement) {
+                todayVisitsElement.textContent = appData.todayVisits || 0;
+            }
+            
+            // 更新公告内容
+            const announcementTextarea = document.getElementById('announcement-content');
+            if (announcementTextarea && appData.announcement) {
+                announcementTextarea.value = appData.announcement;
+            }
+            
+            // 更新维护时间
+            const maintenanceInput = document.getElementById('maintenance-schedule');
+            if (maintenanceInput && appData.maintenanceTime) {
+                maintenanceInput.value = appData.maintenanceTime;
+            }
+            
+            // 更新版本号
+            const versionInput = document.getElementById('version-number');
+            if (versionInput && appData.version) {
+                versionInput.value = appData.version;
+            }
+            
+            // 初始化链接表单
+            initLinksForm(appData);
+            
+            // 初始化数据分析表格
+            initAnalyticsTable(appData);
+        }
+
+        // 初始化事件监听器
+        function initAdminEventListeners() {
+            // 登录表单提交
+            const loginForm = document.getElementById('login-form');
+            if (loginForm) {
+                loginForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    handleLogin();
+                });
+            }
+            
+            // 侧边栏菜单点击
+            const menuItems = document.querySelectorAll('.menu-item');
+            menuItems.forEach(item => {
+                if (item.dataset.panel) {
+                    item.addEventListener('click', function() {
+                        // 移除所有active类
+                        menuItems.forEach(mi => mi.classList.remove('active'));
+                        // 添加当前active类
+                        this.classList.add('active');
+                        // 显示对应的面板
+                        showPanel(this.dataset.panel);
+                    });
+                }
+            });
+            
+            // 保存公告按钮
+            const saveAnnouncementBtn = document.getElementById('save-announcement');
+            if (saveAnnouncementBtn) {
+                saveAnnouncementBtn.addEventListener('click', saveAnnouncement);
+            }
+            
+            // 保存链接按钮
+            const saveLinksBtn = document.getElementById('save-links');
+            if (saveLinksBtn) {
+                saveLinksBtn.addEventListener('click', saveLinks);
+            }
+            
+            // 保存系统设置按钮
+            const saveMaintenanceBtn = document.getElementById('save-maintenance');
+            if (saveMaintenanceBtn) {
+                saveMaintenanceBtn.addEventListener('click', saveMaintenanceSettings);
+            }
+            
+            // 重置统计数据按钮
+            const resetStatsBtn = document.getElementById('reset-stats');
+            if (resetStatsBtn) {
+                resetStatsBtn.addEventListener('click', resetStatistics);
+            }
+            
+            // 导出数据按钮
+            const exportStatsBtn = document.getElementById('export-stats');
+            if (exportStatsBtn) {
+                exportStatsBtn.addEventListener('click', exportStatistics);
+            }
+            
+            // 退出登录按钮
+            const logoutBtn = document.getElementById('logout-btn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', logout);
+            }
+        }
+
+        // 处理登录
+        function handleLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const errorElement = document.getElementById('login-error');
+            
+            // 简单的登录验证
+            if (username === 'admin' && password === 'admin123') {
+                // 登录成功
+                localStorage.setItem('adminLoggedIn', 'true');
+                showAdminPage();
+            } else {
+                // 登录失败
+                errorElement.style.display = 'block';
+                setTimeout(() => {
+                    errorElement.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // 登出
+        function logout() {
+            if (confirm('确定要退出登录吗？')) {
+                localStorage.removeItem('adminLoggedIn');
+                showLoginPage();
+            }
+        }
+
+        // 显示指定面板
+        function showPanel(panelId) {
+            // 隐藏所有面板
+            const panels = document.querySelectorAll('.admin-panel');
+            panels.forEach(panel => {
+                panel.classList.remove('active');
+            });
+            
+            // 显示选中的面板
+            const targetPanel = document.getElementById(`${panelId}-panel`);
+            if (targetPanel) {
+                targetPanel.classList.add('active');
+            }
+            
+            // 更新面板标题
+            const panelTitles = {
+                'dashboard': '仪表板',
+                'announcement': '公告管理',
+                'links': '链接管理',
+                'maintenance': '系统设置',
+                'analytics': '数据分析'
+            };
+            
+            const panelTitle = document.getElementById('panel-title');
+            if (panelTitle && panelTitles[panelId]) {
+                panelTitle.textContent = panelTitles[panelId];
+            }
+        }
+
+        // 初始化管理面板
+        function initAdminPanels() {
+            // 默认显示仪表板
+            showPanel('dashboard');
+        }
+
+        // 初始化链接表单
+        function initLinksForm(appData) {
+            const linksFormContainer = document.getElementById('links-form-container');
+            
+            if (!linksFormContainer || !appData.links) return;
+            
+            linksFormContainer.innerHTML = '';
+            
+            appData.links.forEach((link, index) => {
+                const linkForm = createLinkForm(link, index);
+                linksFormContainer.appendChild(linkForm);
+            });
+        }
+
+        // 创建链接表单
+        function createLinkForm(link, index) {
+            const form = document.createElement('div');
+            form.className = 'link-form';
+            form.style.marginBottom = '20px';
+            form.style.padding = '20px';
+            form.style.backgroundColor = '#f8f9fa';
+            form.style.borderRadius = '10px';
+            
+            form.innerHTML = `
+                <h3 style="margin-bottom: 15px; color: #4a6bff;">链接 ${index + 1}</h3>
+                <div class="form-group">
+                    <label for="link-title-${link.id}">链接标题</label>
+                    <input type="text" id="link-title-${link.id}" class="form-control" value="${link.title || ''}" placeholder="请输入链接标题">
+                </div>
+                <div class="form-group">
+                    <label for="link-desc-${link.id}">链接描述</label>
+                    <textarea id="link-desc-${link.id}" class="form-control" placeholder="请输入链接描述" rows="3">${link.description || ''}</textarea>
+                </div>
+                <div class="form-group">
+                    <label for="link-icon-${link.id}">图标类名 (FontAwesome)</label>
+                    <input type="text" id="link-icon-${link.id}" class="form-control" value="${link.icon || ''}" placeholder="例如: fas fa-download">
+                    <small style="color: #666; font-size: 0.9rem;">使用FontAwesome图标类名，如: fas fa-download, fas fa-book等</small>
+                </div>
+                <div class="form-group">
+                    <label for="link-url-${link.id}">链接地址</label>
+                    <input type="text" id="link-url-${link.id}" class="form-control" value="${link.url || ''}" placeholder="https://example.com">
+                </div>
+                <div class="form-group">
+                    <label for="link-color-${link.id}">链接颜色</label>
+                    <input type="color" id="link-color-${link.id}" class="form-control" value="${link.color || '#4a6bff'}" style="width: 100px; height: 40px;">
+                </div>
+            `;
+            
+            return form;
+        }
+
+        // 保存公告
+        function saveAnnouncement() {
+            const announcementContent = document.getElementById('announcement-content').value;
+            
+            if (!announcementContent.trim()) {
+                alert('公告内容不能为空！');
+                return;
+            }
+            
+            // 获取当前应用数据
+            const appData = loadAppDataForAdmin();
+            
+            // 更新公告
+            appData.announcement = announcementContent;
+            
+            // 保存到localStorage
+            localStorage.setItem('appServicePlatformData', JSON.stringify(appData));
+            
+            // 显示成功消息
+            alert('公告保存成功！');
+            
+            // 更新管理页面显示
+            updateAdminDataDisplay(appData);
+        }
+
+        // 保存链接
+        function saveLinks() {
+            const appData = loadAppDataForAdmin();
+            
+            // 更新每个链接的数据
+            appData.links.forEach(link => {
+                const titleInput = document.getElementById(`link-title-${link.id}`);
+                const descInput = document.getElementById(`link-desc-${link.id}`);
+                const iconInput = document.getElementById(`link-icon-${link.id}`);
+                const urlInput = document.getElementById(`link-url-${link.id}`);
+                const colorInput = document.getElementById(`link-color-${link.id}`);
+                
+                if (titleInput) link.title = titleInput.value;
+                if (descInput) link.description = descInput.value;
+                if (iconInput) link.icon = iconInput.value;
+                if (urlInput) link.url = urlInput.value;
+                if (colorInput) link.color = colorInput.value;
+            });
+            
+            // 保存到localStorage
+            localStorage.setItem('appServicePlatformData', JSON.stringify(appData));
+            
+            // 显示成功消息
+            alert('链接保存成功！');
+            
+            // 更新管理页面显示
+            updateAdminDataDisplay(appData);
+        }
+
+        // 保存系统设置
+        function saveMaintenanceSettings() {
+            const 
