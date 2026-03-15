@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XI项目服务平台 - 首页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        :root {
+            --primary-color: #4a6bff;
+            --secondary-color: #6c5ce7;
+            --success-color: #00b894;
+            --danger-color: #d63031;
+            --warning-color: #fdcb6e;
+            --dark-color: #2d3436;
+            --light-color: #f9f9f9;
+            --gray-color: #636e72;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+        
+        /* 导航栏 */
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 40px;
+            background-color: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+        
+        .nav-links a {
+            text-decoration: none;
+            color: var(--dark-color);
+            font-weight: 600;
+            font-size: 1.1rem;
+            padding: 8px 15px;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+        }
+        
+        .nav-links a:hover {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .admin-btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .admin-btn:hover {
+            background-color: #3a5bff;
+            transform: translateY(-2px);
+        }
+        
+        /* 公告栏 */
+        .announcement {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 15px 40px;
+            margin: 0 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .announcement-icon {
+            color: var(--warning-color);
+            font-size: 1.5rem;
+        }
+        
+        .announcement-content {
+            flex: 1;
+        }
+        
+        .announcement-content h3 {
+            color: var(--dark-color);
+            margin-bottom: 5px;
+        }
+        
+        /* 主内容区 */
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px 40px;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 30px;
+        }
+        
+        /* 链接卡片区 */
+        .links-section {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .section-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 25px;
+            color: var(--dark-color);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 25px;
+        }
+        
+        .link-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .link-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+            border-color: var(--primary-color);
+        }
+        
+        .link-card:active {
+            transform: translateY(-3px) scale(0.99);
+            transition: transform 0.1s ease;
+        }
+        
+        .link-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            margin-bottom: 20px;
+            color: white;
+        }
+        
+        .link-card:nth-child(1) .link-icon { background: linear-gradient(135deg, #667eea, #764ba2); }
+        .link-card:nth-child(2) .link-icon { background: linear-gradient(135deg, #f093fb, #f5576c); }
+        .link-card:nth-child(3) .link-icon { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+        .link-card:nth-child(4) .link-icon { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+        .link-card:nth-child(5) .link-icon { background: linear-gradient(135deg, #fa709a, #fee140); }
+        
+        .link-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--dark-color);
+        }
+        
+        .link-desc {
+            color: var(--gray-color);
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        
+        .link-stats {
+            display: flex;
+            justify-content: space-between;
+            color: var(--gray-color);
+            font-size: 0.9rem;
+        }
+        
+        .click-count {
+            color: var(--primary-color);
+            font-weight: 600;
+        }
+        
+        /* 用户数据面板 */
+        .data-panel {
+            background-color: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.1);
+        }
+        
+        .data-item {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .data-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .data-title {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .data-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .data-progress {
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            border-radius: 4px;
+        }
+        
+        /* 底部信息 */
+        .footer {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px 40px;
+            margin-top: 40px;
+            border-radius: 20px 20px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .maintenance-info {
+            color: var(--gray-color);
+        }
+        
+        .maintenance-time {
+            font-weight: 600;
+            color: var(--dark-color);
+        }
+        
+        .version {
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 1200px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .navbar, .main-container, .announcement, .footer {
+                padding-left: 20px;
+                padding-right: 20px;
+            }
+            
+            .links-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .footer {
+                flex-direction: column;
+                gap: 20px;
+                text-align: center;
+            }
+        }
+        
+        /* 点击动画 */
+        @keyframes clickAnimation {
+            0% { transform: scale(1); }
+            50% { transform: scale(0.95); }
+            100% { transform: scale(1); }
+        }
+        
+        .clicked {
+            animation: clickAnimation 0.3s ease;
+        }
+    </style>
+</head>
+<body>
+    <!-- 导航栏 -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-rocket"></i>
+            <span>XI项目服务平台</span>
+        </div>
+        <div class="nav-links">
+            <a href="#"><i class="fas fa-home"></i> 首页</a>
+            <a href="#"><i class="fas fa-th-large"></i> 服务</a>
+            <a href="#"><i class="fas fa-info-circle"></i> 关于</a>
+            <a href="#"><i class="fas fa-headset"></i> 支持</a>
+        </div>
+        <button class="admin-btn" onclick="window.open('admin.html', '_blank')">
+            <i class="fas fa-cog"></i> 后台管理
+        </button>
+    </nav>
+    
+    <!-- 公告栏 -->
+    <div class="announcement">
+        <div class="announcement-icon">
+            <i class="fas fa-bullhorn"></i>
+        </div>
+        <div class="announcement-content">
+            <h3>系统公告</h3>
+            <p id="announcement-text">欢迎使用应用服务平台！系统运行稳定，所有功能均可正常使用。最新版本已上线，带来更流畅的使用体验。</p>
+        </div>
+    </div>
+    
+    <!-- 主内容区 -->
+    <div class="main-container">
+        <div class="dashboard">
+            <!-- 链接卡片区 -->
+            <div class="links-section">
+                <h2 class="section-title">
+                    <i class="fas fa-external-link-alt"></i> 快速访问链接
+                </h2>
+                <div class="links-grid" id="links-container">
+                    <!-- 链接卡片将通过JS动态生成 -->
+                </div>
+            </div>
+            
+            <!-- 用户数据面板 -->
+            <div class="data-panel">
+                <h2 class="section-title">
+                    <i class="fas fa-chart-bar"></i> 用户数据面板
+                </h2>
+                
+                <div class="data-item">
+                    <div class="data-header">
+                        <div class="data-title">今日总点击量</div>
+                        <div class="data-value" id="total-clicks">0</div>
+                    </div>
+                    <div class="data-progress">
+                        <div class="progress-bar" id="total-progress" style="width: 0%; background-color: #667eea;"></div>
+                    </div>
+                </div>
+                
+                <div class="data-item">
+                    <div class="data-header">
+                        <div class="data-title">最受欢迎链接</div>
+                        <div class="data-value" id="popular-link">-</div>
+                    </div>
+                    <div class="data-progress">
+                        <div class="progress-bar" id="popular-progress" style="width: 0%; background-color: #f093fb;"></div>
+                    </div>
+                </div>
+                
+                <div class="data-item">
+                    <div class="data-header">
+                        <div class="data-title">用户活跃度</div>
+                        <div class="data-value" id="user-activity">0%</div>
+                    </div>
+                    <div class="data-progress">
+                        <div class="progress-bar" id="activity-progress" style="width: 0%; background-color: #4facfe;"></div>
+                    </div>
+                </div>
+                
+                <div class="data-item">
+                    <div class="data-header">
+                        <div class="data-title">点击响应时间</div>
+                        <div class="data-value" id="response-time">0ms</div>
+                    </div>
+                    <div class="data-progress">
+                        <div class="progress-bar" id="response-progress" style="width: 0%; background-color: #43e97b;"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 底部信息 -->
+    <footer class="footer">
+        <div class="maintenance-info">
+            <p>系统维护时间: <span class="maintenance-time" id="maintenance-time">每周日凌晨 2:00-4:00</span></p>
+            <p>如有问题，请联系技术支持: JUFENYS
+                       TG：@XIYDS              </p>
+        </div>
+        <div class="version-info">
+            <p>网页版本号: <span class="version" id="version-number">v2.1.5</span></p>
+            <p>最后更新: 2026-01-15</p>
+        </div>
+    </footer>
+    
+    <script src="app.js"></script>
+</body>
+</html>
