@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>XI项目服务平台 - 首页</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif; }
+        :root {
+            --primary-color: #4a6bff; --secondary-color: #6c5ce7; --success-color: #00b894;
+            --danger-color: #d63031; --warning-color: #fdcb6e; --dark-color: #2d3436;
+            --light-color: #f9f9f9; --gray-color: #636e72;
+        }
+        body { background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%); min-height: 100vh; color: #333; }
+        
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px;
+            background-color: white; box-shadow: 0 4px 20px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .logo { font-size: 2rem; font-weight: 800; color: var(--primary-color); display: flex; align-items: center; gap: 10px; }
+        .logo i { color: var(--secondary-color); }
+        .nav-buttons { display: flex; gap: 20px; }
+        .nav-button { background: none; border: none; padding: 10px 20px; font-size: 1.1rem; font-weight: 600;
+            color: var(--dark-color); cursor: pointer; border-radius: 8px; transition: all 0.3s ease;
+            display: flex; align-items: center; gap: 8px; }
+        .nav-button:hover { background-color: var(--primary-color); color: white; transform: translateY(-2px); }
+        .nav-button.active { background-color: var(--primary-color); color: white; }
+        
+        .announcement-bar { background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+            color: white; padding: 15px 40px; margin: 20px 40px; border-radius: 12px;
+            display: flex; align-items: center; gap: 15px; box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+        .announcement-icon { font-size: 1.5rem; }
+        .announcement-content { flex: 1; }
+        
+        .main-container { max-width: 1400px; margin: 0 auto; padding: 20px 40px; }
+        .content-wrapper { display: grid; grid-template-columns: 2fr 1fr; gap: 30px; }
+        
+        .quick-access { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .section-title { font-size: 1.8rem; font-weight: 700; margin-bottom: 25px; color: var(--dark-color);
+            display: flex; align-items: center; gap: 10px; }
+        .quick-access-links { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; }
+        
+        .link-card { background: white; border-radius: 15px; padding: 25px; box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            transition: all 0.4s cubic-bezier(0.175,0.885,0.32,1.275); cursor: pointer; border: 2px solid transparent;
+            display: flex; align-items: center; gap: 20px; position: relative; overflow: hidden; }
+        .link-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+            border-color: var(--primary-color); }
+        .link-card:active { transform: translateY(-3px) scale(0.99); }
+        .link-icon { width: 60px; height: 60px; border-radius: 12px; display: flex; align-items: center;
+            justify-content: center; font-size: 1.8rem; flex-shrink: 0; }
+        .link-content { flex: 1; }
+        .link-content h3 { font-size: 1.4rem; font-weight: 700; margin-bottom: 8px; color: var(--dark-color); }
+        .link-content p { color: var(--gray-color); line-height: 1.5; font-size: 0.95rem; }
+        .link-arrow { color: var(--gray-color); font-size: 1.2rem; transition: transform 0.3s ease; }
+        .link-card:hover .link-arrow { transform: translateX(5px); color: var(--primary-color); }
+        
+        .data-panel { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+        .data-item { display: flex; justify-content: space-between; align-items: center; padding: 20px;
+            margin-bottom: 15px; background: #f8f9fa; border-radius: 12px; border-left: 4px solid var(--primary-color); }
+        .data-value { font-size: 1.8rem; font-weight: 700; color: var(--primary-color); }
+        
+        .action-buttons { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
+        .action-button { padding: 12px 25px; border: none; border-radius: 10px; font-weight: 600; cursor: pointer;
+            transition: all 0.3s ease; display: flex; align-items: center; gap: 10px; font-size: 1rem; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: #3a5bff; transform: translateY(-2px); box-shadow: 0 5px 15px rgba(74,107,255,0.3); }
+        .btn-success { background-color: var(--success-color); color: white; }
+        .btn-success:hover { background-color: #00a085; transform: translateY(-2px); }
+        .btn-warning { background-color: var(--warning-color); color: var(--dark-color); }
+        .btn-warning:hover { background-color: #f7b95a; transform: translateY(-2px); }
+        .btn-danger { background-color: var(--danger-color); color: white; }
+        .btn-danger:hover { background-color: #c0392b; transform: translateY(-2px); }
+        
+        .footer { margin-top: 40px; padding: 30px 40px; background: white; border-radius: 20px 20px 0 0;
+            display: flex; justify-content: space-between; align-items: center; color: var(--gray-color); }
+        .version-info { text-align: right; }
+        .version { font-weight: 600; color: var(--primary-color); }
+        .maintenance-time { font-weight: 600; color: var(--dark-color); }
+        
+        @keyframes clickAnimation { 0% { transform: scale(1); } 50% { transform: scale(0.95); } 100% { transform: scale(1); } }
+        .clicked { animation: clickAnimation 0.3s ease; }
+        
+        @media (max-width: 1200px) { .content-wrapper { grid-template-columns: 1fr; } }
+        @media (max-width: 768px) { .navbar, .announcement-bar, .main-container, .footer { padding: 15px 20px; }
+            .quick-access-links { grid-template-columns: 1fr; } .nav-buttons { display: none; }
+            .action-buttons { justify-content: center; } .footer { flex-direction: column; gap: 20px; text-align: center; } }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <div class="logo"><i class="fas fa-rocket"></i><span>应用服务平台</span></div>
+        <div class="nav-buttons">
+            <button class="nav-button active"><i class="fas fa-home"></i><span>首页</span></button>
+            <button class="nav-button"><i class="fas fa-th-large"></i><span>服务</span></button>
+            <button class="nav-button"><i class="fas fa-info-circle"></i><span>关于</span></button>
+            <button class="nav-button"><i class="fas fa-headset"></i><span>支持</span></button>
+        </div>
+    </nav>
+    
+    <div class="announcement-bar">
+        <div class="announcement-icon"><i class="fas fa-bullhorn"></i></div>
+        <div class="announcement-content">
+            <h3 id="announcement-title">系统公告</h3>
+            <p id="announcement-text">欢迎使用应用服务平台！系统运行稳定，所有功能均可正常使用。</p>
+        </div>
+    </div>
+    
+    <div class="main-container">
+        <div class="content-wrapper">
+            <div class="quick-access">
+                <h2 class="section-title"><i class="fas fa-external-link-alt"></i> 快速访问</h2>
+                <div class="quick-access-links" id="links-container"></div>
+                <div class="action-buttons">
+                    <button class="action-button btn-primary" id="adminButton" onclick="window.open('admin.html', '_blank')">
+                        <i class="fas fa-cog"></i>后台管理
+                    </button>
+                    <button class="action-button btn-success" id="refreshButton"><i class="fas fa-redo"></i>刷新数据</button>
+                    <button class="action-button btn-warning" id="exportButton"><i class="fas fa-download"></i>导出数据</button>
+                </div>
+            </div>
+            
+            <div class="data-panel">
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i> 用户数据面板</h2>
+                <div class="data-item"><span>今日总点击量</span><span class="data-value" id="todayClicks">0</span></div>
+                <div class="data-item"><span>总点击量</span><span class="data-value" id="totalClicks">0</span></div>
+                <div class="data-item"><span>今日访问次数</span><span class="data-value" id="todayVisits">0</span></div>
+                <div class="data-item"><span>最受欢迎链接</span><span class="data-value" id="popularLink">-</span></div>
+                <div class="data-item"><span>平均响应时间</span><span class="data-value" id="avgResponseTime">0ms</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <footer class="footer">
+        <div class="system-info">
+            <p>系统维护时间: <span class="maintenance-time" id="maintenanceTime">每周日凌晨 00:00-3:00</span></p>
+            <p>技术支持TG：@XIYDS |作者：久峰</p>
+        </div>
+        <div class="version-info">
+            <p>网页版本号: <span class="version" id="versionNumber">v1.0.1</span></p>
+            <p>© 2026 应用服务平台 版权所有</p>
+        </div>
+    </footer>
+
+    <script>
+        const appData = { links: [], totalClicks: 0, todayClicks: 0, todayVisits: 0, lastVisit: null,
+            clickHistory: [], announcement: "欢迎使用应用服务平台！系统运行稳定，所有功能均可正常使用。",
+            maintenanceTime: "每周日凌晨 00:00-3:00", version: "v1.0.1" };
+        
+        const defaultLinks = [
+            { id: 1, title: "应用下载中心", description: "获取最新版本的应用和工具，支持多平台下载",
+                icon: "fas fa-download", url: "https://example.com/download", color: "#4a6bff", clicks: 0, lastClick: null },
+            { id: 2, title: "服务控制台", description: "管理您的服务配置和监控运行状态",
+                icon: "fas fa-cogs", url: "https://example.com/console", color: "#00b894", clicks: 0, lastClick: null },
+            { id: 3, title: "用户中心", description: "查看个人信息、权限设置和账号安全",
+                icon: "fas fa-user-circle", url: "https://example.com/user", color: "#fdcb6e", clicks: 0, lastClick: null },
+            { id: 4, title: "数据分析", description: "查看平台使用数据和分析报告",
+                icon: "fas fa-chart-bar", url: "https://example.com/analytics", color: "#e17055", clicks: 0, lastClick: null },
+            { id: 5, title: "技术支持", description: "获取帮助文档、联系客服和技术支持",
+                icon: "fas fa-headset", url: "https://example.com/support", color: "#6c5ce7", clicks: 0, lastClick: null }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() { initApp(); });
+
+        function initApp() {
+            loadAppData();
+            initLinks();
+            initEventListeners();
+            updateDataPanel();
+            updateTodayVisits();
+        }
+
+        function loadAppData() {
+            const savedData = localStorage.getItem('appServicePlatformData');
+            if (savedData) {
+                try { Object.assign(appData, JSON.parse(savedData)); } catch (e) { console.error('加载数据失败:', e); }
+            }
+            if (!appData.links || appData.links.length === 0) { appData.links = [...defaultLinks]; }
+            document.getElementById('announcement-text').textContent = appData.announcement;
+            document.getElementById('maintenanceTime').textContent = appData.maintenanceTime;
+            document.getElementById('versionNumber').textContent = appData.version;
+        }
+
+        function saveAppData() {
+            try { localStorage.setItem('appServicePlatformData', JSON.stringify(appData)); } catch (e) { console.error('保存数据失败:', e); }
+        }
+
+        function initLinks() {
+            const linksContainer = document.getElementById('links-container');
+            linksContainer.innerHTML = '';
+            appData.links.forEach(link => {
+                const linkCard = document.createElement('div');
+                linkCard.className = 'link-card';
+                linkCard.dataset.id = link.id;
+                linkCard.innerHTML = `
+                    <div class="link-icon" style="color: ${link.color};"><i class="${link.icon}"></i></div>
+                    <div class="link-content"><h3>${link.title}</h3><p>${link.description}</p></div>
+                    <div class="link-arrow"><i class="fas fa-arrow-right"></i></div>`;
+                linkCard.addEventListener('click', () => handleLinkClick(link));
+                linksContainer.appendChild(linkCard);
+            });
+        }
+
+        function handleLinkClick(link) {
+            const startTime = performance.now();
+            const card = document.querySelector(`.link-card[data-id="${link.id}"]`);
+            if (card) { card.classList.add('clicked'); setTimeout(() => card.classList.remove('clicked'), 300); }
+            
+            link.clicks = (link.clicks || 0) + 1;
+            appData.totalClicks++; appData.todayClicks++;
+            link.lastClick = new Date().toISOString();
+            
+            if (!appData.clickHistory) appData.clickHistory = [];
+            const clickRecord = { linkId: link.id, linkTitle: link.title, timestamp: new Date().toISOString(), responseTime: 0 };
+            const responseTime = performance.now() - startTime;
+            clickRecord.responseTime = responseTime;
+            appData.clickHistory.push(clickRecord);
+            
+            updateDataPanel(); saveAppData();
+            
+            setTimeout(() => {
+                if (link.url && link.url.trim()) {
+                    window.open(link.url, '_blank');
+                    console.log(`已跳转到: ${link.title} (${link.url})`);
+                } else { alert('链接地址未设置'); }
+            }, 50);
+        }
+
+        function updateTodayVisits() {
+            const today = new Date().toDateString();
+            if (appData.lastVisit !== today) { appData.todayVisits = 0; appData.todayClicks = 0; }
+            appData.todayVisits++; appData.lastVisit = today; saveAppData();
+        }
+
+        function updateDataPanel() {
+            document.getElementById('todayClicks').textContent = appData.todayClicks;
+            document.getElementById('totalClicks').textContent = appData.totalClicks;
+            document.getElementById('todayVisits').textContent = appData.todayVisits;
+            
+            let popularLink = '-', maxClicks = 0;
+            appData.links.forEach(link => { if (link.clicks > maxClicks) { maxClicks = link.clicks; popularLink = link.title; } });
+            document.getElementById('popularLink').textContent = popularLink;
+            
+            let avgResponseTime = 0;
+            if (appData.clickHistory && appData.clickHistory.length > 0) {
+                const totalResponseTime = appData.clickHistory.reduce((sum, record) => sum + (record.responseTime || 0), 0);
+                avgResponseTime = totalResponseTime / appData.clickHistory.length;
+            }
+            document.getElementById('avgResponseTime').textContent = avgResponseTime.toFixed(0) + 'ms';
+        }
+
+        function initEventListeners() {
+            document.querySelectorAll('.nav-button').forEach(button => {
+                button.addEventListener('click', function() {
+                    document.querySelectorAll('.nav-button').forEach(btn => btn.classList.remove('active'));
+                    this.classList.add('active');
+                });
+            });
+            
+            document.getElementById('refreshButton').addEventListener('click', () => location.reload());
+            document.getElementById('exportButton').addEventListener('click', exportData);
+        }
+
+        function exportData() {
+            const exportData = { exportTime: new Date().toISOString(), summary: { totalClicks: appData.totalClicks,
+                todayClicks: appData.todayClicks, todayVisits: appData.todayVisits }, links: appData.links, clickHistory: appData.clickHistory };
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
+            const exportFileDefaultName = `应用平台数据_${new Date().toISOString().slice(0,10)}.json`;
+            const linkElement = document.createElement('a');
+            linkElement.setAttribute('href', dataUri);
+            linkElement.setAttribute('download', exportFileDefaultName);
+            linkElement.click();
+            alert('数据导出成功！');
+        }
+    </script>
+</body>
+</html>
